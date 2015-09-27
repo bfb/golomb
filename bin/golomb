@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+require 'gli'
+
+require 'golomb'
+require 'terminal-table'
+
+include GLI::App
+
+program_desc 'Encoder and decoder'
+
+version Golomb::VERSION
+
+subcommand_option_handling :normal
+arguments :strict
+
+desc 'Divisor value'
+default_value '16'
+arg_name 'The divisor value for encode and decode'
+flag [:d,:divisor]
+
+desc 'Output file'
+default_value 'output'
+arg_name 'The output file name'
+flag [:o,:output]
+
+desc 'Encode a file or a text stream'
+arg_name 'File path or text stream to be encoded'
+command :encode do |c|
+
+  c.desc 'Show symbols table'
+  c.switch [:v,:verbose]
+
+
+  c.action do |global_options,options,args|
+    # executes the encoder process
+    @encoder = Golomb::Encoder.new(global_options[:d].to_i, @data)
+    @encoder.exec
+
+  end
+end
+
+desc 'Describe decode here'
+arg_name 'File or text stream to be decoded'
+command :decode do |c|
+  c.action do |global_options,options,args|
+    # executes the decoder process
+    @decoder = Golomb::Decoder.new(global_options[:d].to_i, @data)
+    @decoder.exec
+  end
+end
+
+pre do |global,command,options,args|
+  # checks if is a valid file or a text stream
+  if File.exists?(args.first)
+    @data = File.open(args.first).read
+  else
+    @data = args.first
+  end
+
+  true
+end
+
+post do |global,command,options,args|
+  case command.name
+  when :encode then
+    # if verbose flag is enable
+    if options[:v]
+      table = Terminal::Table.new :title => "Symbol table", :headings => ['Symbol', 'Encode'], :rows => @encoder.symbol_table
+      puts table
+
+      puts "\nINPUT HEX:"
+      puts @encoder.data_to_hex
+      puts "\nOUTPUT HEX:"
+      puts @encoder.result_to_hex
+    end
+
+    # generates the output file
+    output = File.new(global[:o], 'wb')
+    output.write(@encoder.result_to_hex)
+    output.close
+  when :decode then
+    # shows the decoded data
+    puts @decoder.decoded_data.join
+  end
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  p exception.message
+  p exception.backtrace
+  true
+end
+
+exit run(ARGV)
