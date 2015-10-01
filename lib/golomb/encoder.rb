@@ -23,8 +23,7 @@ module Golomb
 
       # checks if the divisor is power of 2 (Rice coding)
       if @divisor.to_s(2).scan(/1/).size == 1
-        # remainder_code = "0#{remainder.to_s(2)}"
-        remainder_code = "0" << remainder.to_s(2)
+        remainder_code = remainder.to_s(2)
       else
         b = Math.log2(@divisor).ceil
 
