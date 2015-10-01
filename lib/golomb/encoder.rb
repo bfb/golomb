@@ -18,7 +18,6 @@ module Golomb
     def encode(symbol)
       quotient = (symbol / @divisor).to_i
       remainder = symbol % @divisor
-      # quotient_code = "#{"1" * quotient}#{0}"
       quotient_code = ("1" * quotient) << "0"
 
       # checks if the divisor is power of 2 (Rice coding)
@@ -28,7 +27,6 @@ module Golomb
         b = Math.log2(@divisor).ceil
 
         if remainder < (2 ** b) - @divisor
-          # remainder_code = "#{"0" * (b - 1 - remainder.to_s(2).size)}#{remainder.to_s(2)}"
           remainder_code = "0" * (b - 1 - remainder.to_s(2).size) << remainder.to_s(2)
         else
           remainder_code = (remainder + (2 ** b) - @divisor).to_i.to_s(2)
