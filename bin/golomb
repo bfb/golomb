@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'gli'
 
-require 'golomb'
+require_relative '../lib/golomb'
 require 'terminal-table'
 
 include GLI::App

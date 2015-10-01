@@ -1,3 +1,3 @@
-require 'golomb/version.rb'
-require 'golomb/encoder.rb'
-require 'golomb/decoder.rb'
+require_relative 'golomb/version.rb'
+require_relative 'golomb/encoder.rb'
+require_relative 'golomb/decoder.rb'
